@@ -1,13 +1,14 @@
 #include <stdio.h>
 void main()
-{ int i = 0;
-    while(i < 5)
-    {
-    	printf("%d", getchar() != EOF);
-    	i++;
-    	
-    }
+{
 
+int c;
+while(c = getchar() != EOF)
+{
+	printf("%d", c);
+}
+printf("AT EOF: \n");
+printf("%d", c);
 
 }
 
