@@ -37,20 +37,18 @@ void main()
 		
 		if (cc[i] > 0)
 		{
-			if ((len = cc[i] * MAXHIST / maxvalue) <= 0)
+			if ((len - cc[i] * MAXHIST / maxvalue) <= 0)
 				len = 1;
 		}
 		else
 		{
 			len = 0;
 		}
-		while(len > 0)
+		for (i = 0; i < len; i++)
 		{
-			putchar('*');
-			len--;
+			printf("*");
 		}
-		putchar('\n');
-
+		printf("\n");
 	}
 }
 		
