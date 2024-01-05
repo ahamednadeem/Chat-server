@@ -55,7 +55,7 @@ int get_line(char arr[], int lim) {
             		++i;
         	}
     }
-
+	
     arr[i] = '\0';
     return i;
 }
