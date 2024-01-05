@@ -12,7 +12,7 @@ while((character = getchar()) != EOF)
         space = (TAB - (count % TAB));
         while(space > 0)
         {
-            putchar('@');
+            putchar(' ');
             count++;
             space--;
         }
