@@ -1,19 +1,32 @@
 #include<stdio.h>
+#include<time.h>
+
 
 int binary_search(int x, int v[], int len);
 
 int main() 
 {
-    int arr[] = {2, 3, 9, 23, 32, 65, 87, 121, 141, 821};
-    int res  = binary_search(652, arr, 10);
+    time_t start_t, end_t;
+    double diff_t;
+    
+    printf("Starting of the program\n");
+    time(&start_t);
+   	
+    int arr[] = {2, 3, 9, 23, 32, 65, 87, 121, 141, 821, 1231, 2222, 2223, 2234, 2239};
+    int res  = binary_search(2239, arr, 15);
     if (res == -1)
     {
-    	printf("Element not found ");
+    	printf("Element not found \n");
     }
     else
     {
-    printf("Fount at position %d", res);
+    printf("Fount at position %d \n", res);
     }
+    
+    time(&end_t);
+    diff_t = difftime(end_t, start_t);
+
+    printf("Execution time = %f\n", diff_t);
     return 0;
 }
 
