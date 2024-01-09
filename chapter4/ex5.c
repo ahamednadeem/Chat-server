@@ -76,6 +76,16 @@ int main(void)
             case '\n':
                 printf("\t%.8g\n", pop());
                 break;
+            case 'sin':
+                push(sin(pop()));
+                break;
+            case 'exp':
+                push(exp(pop()));
+                break;
+            case 'pow':
+                op2 = pop();
+                push(math.pow(pop(), op2));
+                break;
             default:
                 printf("error: unknown command or invalid input %s\n", token);
                 break;
