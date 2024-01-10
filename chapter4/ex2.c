@@ -5,6 +5,10 @@
 
 double _atof(char s[]);
 void mgetline(char line[], int lim);
+int power(int base, int exp);
+double val, pow;
+int sign, i, esign, exp;
+    
 
 int main() {
     char str[MAXLINE];
@@ -16,11 +20,9 @@ int main() {
     return 0;
 }
 
-double _atof(char s[]) 
+double _atof(char s[]) //converts a string into a floating point numerical representation
 {
-    double val, pow;
-    int sign, i, esign, exp;
-    int power(int base, int exp);
+    
 
     sign = (s[i] == '-') ? -1 : 1;
 
@@ -36,7 +38,7 @@ double _atof(char s[])
     for (pow = 1.0; isdigit(s[i]); i++) 
     {
         val = 10.0 * val + (s[i] - '0');
-        pow *= 10.0;
+        pow *= 10.0;                              
     }
 
     if (s[i] == 'e' || s[i] == 'E')
@@ -57,7 +59,7 @@ double _atof(char s[])
         return sign * (val / pow) * power(10, exp);
 }
 
-void mgetline(char line[], int lim) 
+void mgetline(char line[], int lim) //get input from the user
 {
     int i, c;
     for (i = 0; i < lim - 1 && (c = getchar()) != EOF && c != '\n'; ++i)
@@ -69,7 +71,8 @@ void mgetline(char line[], int lim)
     line[i] = '\0';
 }
 
-int power(int base, int exp) {
+int power(int base, int exp) //calculate the power of e
+{
     int power;
     power = 1;
     while (exp > 0)
