@@ -1,22 +1,22 @@
 #include<stdio.h>
 #include<string.h>
-#define MAXLINE 1000
+#define MAXLINE 1000  //This gives the limit for maximum lines
 
-int strindex(char s[], char t[]);
+int strindex(char s[], char t[]); 
 void getlines(char s[], int lim);
 
 void main()
 {
-	char s[MAXLINE];
-	char t[] = "xyz";
+	char s[MAXLINE];      //we get s as input from the user
+	char t[] = "xyz";     //sample text
 
 	int c;
-	getlines(s, MAXLINE);
+	getlines(s, MAXLINE); 
 	
 	int res = strindex(s, t);
 	if (res >= 0)
 	{
-		printf("Found at pos %d \n", res + 1);
+		printf("Element Found at pos %d \n", res + 1);
 	}
 	else
 	{
@@ -24,7 +24,7 @@ void main()
 	}
 }
 
-void getlines(char s[], int lim) 
+void getlines(char s[], int lim) //get input from the user character by character and store it in character array
 {
     int i, c;
     for (i = 0; i < lim - 1 && (c = getchar()) != EOF && c != '\n'; ++i)
@@ -40,16 +40,16 @@ void getlines(char s[], int lim)
     s[i] = '\0';
 }
 
-int strindex(char s[],char t[])
+int strindex(char s[],char t[])  //finds the rightmost occurance of t in s
 {
     int i,j,k, result;
     result = -1;
-
+    
     for(i = 0; s[i] != '\0'; i++)
     {
         for(j = i, k = 0; t[k] != '\0' && s[j] == t[k]; j++, k++)
             ;
-        if(k > 0 && t[k] == '\0')
+        if(t[k] == '\0')  
             result = i; //we keep updating this to find the rightmost index
     }
     return result;
