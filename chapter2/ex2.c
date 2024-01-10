@@ -1,5 +1,6 @@
 #include<stdio.h>
-#define maximum_limit 10
+#define maximum_limit 100
+
 /*for(i=0; i < lim -1 && (c=getchar()) != '\n' && c != EOF; ++i)
   s[i] = c;
   
