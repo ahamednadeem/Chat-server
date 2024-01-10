@@ -4,19 +4,19 @@
 #include <ctype.h>
 #include <math.h>
 
-#define MAX_STACK_SIZE 100
+#define MAXVAL 100
 #define NUMBER '0'
 #define BUFSIZE 100
 
+int stack_pointer = 0;
+double stack[MAXVAL];
+char buf[BUFSIZE];
+int buffer_pointer = 0; 
 
-int stack_pointer;
-double stack[MAX_STACK_SIZE];
-char buffer[100];
-int buffer_index = 0;
 
 void push(double value);
 double pop(void);
-int get_token(char token[]);
+int getop(char token[]);
 void print_top(void);
 void duplicate_top(void);
 void swap_top_two(void);
@@ -28,14 +28,14 @@ int main(void)
 {
     int type;
     double op2;
-    char token[100];
+    char s[MAXVAL];
 
-    while ((type = get_token(token)) != EOF) 
+    while ((type = getop(s)) != EOF) 
     {
         switch (type) 
         {
             case NUMBER:
-                push(atof(token));
+                push(atof(s));
                 break;
             case '+':
                 push(pop() + pop());
@@ -77,7 +77,7 @@ int main(void)
                 printf("\t%.8g\n", pop());
                 break;
             default:
-                printf("error: unknown command or invalid input %s\n", token);
+                printf("error: unknown command or invalid input %s\n", s);
                 break;
         }
     }
@@ -85,14 +85,16 @@ int main(void)
     return 0;
 }
 
+/* push a value onto the stack */
 void push(double value) 
 {
-    if (stack_pointer < MAX_STACK_SIZE)
+    if (stack_pointer < MAXVAL)
         stack[stack_pointer++] = value;
     else
         printf("error: stack full, can't push %g\n", value);
 }
 
+/* pop and return a value from the stack */
 double pop(void) 
 {
     if (stack_pointer > 0)
@@ -104,34 +106,40 @@ double pop(void)
     }
 }
 
-int get_token(char token[]) 
+/* get the next operator or operand */
+int getop(char s[]) 
 {
-    int character, index = 0;
+    int character, i = 0;
 
-    while ((token[0] = character = getch()) == ' ' || character == '\t');
-    token[1] = '\0';
+    while ((s[0] = character = getch()) == ' ' || character == '\t');
+    s[1] = '\0';
 
-    if (!isdigit(character) && character != '.' && character != '-') {
+    if (!isdigit(character) && character != '.' && character != '-') 
+    {
         return character;
     }
 
-    if (character == '-' || isdigit(character)) {
-        while (isdigit(token[++index] = character = getch()));
+    if (character == '-' || isdigit(character)) 
+    {
+        while (isdigit(s[++i] = character = getch()));
     }
 
-    if (character == '.') {
-        while (isdigit(token[++index] = character = getch()));
+    if (character == '.') 
+    {
+        while (isdigit(s[++i] = character = getch()));
     }
 
-    token[index] = '\0';
+    s[i] = '\0';
 
-    if (character != EOF) {
+    if (character != EOF) 
+    {
         ungetch(character);
     }
 
-    return (strcmp(token, "-") == 0) ? '-' : NUMBER;
+    return NUMBER;
 }
 
+/* print the top element of the stack */
 void print_top(void) 
 {
     if (stack_pointer > 0)
@@ -140,6 +148,7 @@ void print_top(void)
         printf("error: stack empty\n");
 }
 
+/* duplicate the top element of the stack */
 void duplicate_top(void) 
 {
     if (stack_pointer > 0) 
@@ -153,6 +162,7 @@ void duplicate_top(void)
     }
 }
 
+/* swap the top two elements of the stack */
 void swap_top_two(void) 
 {
     if (stack_pointer >= 2) 
@@ -168,6 +178,7 @@ void swap_top_two(void)
     }
 }
 
+/* clear all elements from the stack */
 void clear_stack(void) 
 {
     stack_pointer = 0;
@@ -177,11 +188,13 @@ void clear_stack(void)
 char buf[BUFSIZE];
 int bufp = 0;
 
+/* get a (possibly pushed back) character */
 int getch(void) 
 {
     return (bufp > 0) ? buf[--bufp] : getchar();
 }
 
+/* push character back on input */
 void ungetch(int c) 
 {
     if (bufp >= BUFSIZE)

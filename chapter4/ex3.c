@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAXOP 100
 #define NUMBER '0'
 #define BUFSIZE 100
 #define MAXVAL 100
@@ -24,9 +23,10 @@ double pop(void);
 int main(void) {
     int type;
     double op2;
-    char s[MAXOP];
+    char s[MAXVAL];
 
-    while ((type = getop(s)) != EOF) {
+    while ((type = getop(s)) != EOF) 
+    {
         switch (type) {
             case NUMBER:
                 push(atof(s));
@@ -86,26 +86,26 @@ double pop(void) {
 
 /*get the next operator or operand */
 int getop(char s[]) {
-    int i, c;
+    int i, character;
 
-    while ((s[0] = c = getch()) == ' ' || c == '\t');
+    while ((s[0] = character = getch()) == ' ' || character == '\t');
     s[1] = '\0';
 
-    if (!isdigit(c) && c != '.' && c != '-')
-        return c; 
+    if (!isdigit(character) && character != '.' && character != '-')
+        return character; 
 
     i = 0;
 
-    if (c == '-' || isdigit(c))
-        while (isdigit(s[++i] = c = getch()));
+    if (character == '-' || isdigit(character))
+        while (isdigit(s[++i] = character = getch()));
 
-    if (c == '.')
-        while (isdigit(s[++i] = c = getch()));
+    if (character == '.')
+        while (isdigit(s[++i] = character = getch()));
 
     s[i] = '\0';
 
-    if (c != EOF)
-        ungetch(c);
+    if (character != EOF)
+        ungetch(character);
    
     return NUMBER;
 }
