@@ -10,11 +10,12 @@
 #define MAXVAL 100
 
 int stack_pointer = 0;
-int bufp = 0;
+int buffer_pointer = 0; 
 double val[MAXVAL];
 char buf[BUFSIZE];
 
-int getch(void);
+
+int getch(void); 
 void ungetch(int);
 int getop(char[]);
 void push(double);
@@ -65,6 +66,7 @@ int main(void) {
     return 0;
 }
 
+/*push a value onto the stack */
 void push(double f) {
     if (stack_pointer < MAXVAL)
         val[stack_pointer++] = f;
@@ -72,6 +74,7 @@ void push(double f) {
         printf("error: stack full, can't push %g\n", f);
 }
 
+/*pop and return a value from the stack */
 double pop(void) {
     if (stack_pointer > 0)
         return val[--stack_pointer];
@@ -81,6 +84,7 @@ double pop(void) {
     }
 }
 
+/*get the next operator or operand */
 int getop(char s[]) {
     int i, c;
 
@@ -88,7 +92,7 @@ int getop(char s[]) {
     s[1] = '\0';
 
     if (!isdigit(c) && c != '.' && c != '-')
-        return c; // not a number
+        return c; 
 
     i = 0;
 
@@ -102,20 +106,22 @@ int getop(char s[]) {
 
     if (c != EOF)
         ungetch(c);
-
-    if (strcmp(s, "-") == 0)
-        return '-';
+   
     return NUMBER;
 }
 
-void ungetch(int c) {
-    if (bufp >= BUFSIZE)
-        printf("ungetch: too many characters\n");
+/* push character back on input */
+void ungetch(int c) 
+{
+    if (buffer_pointer >= BUFSIZE)
+        printf("too many characters\n");
     else
-        buf[bufp++] = c;
+        buf[buffer_pointer++] = c;
 }
 
-int getch(void) {
-    return (bufp > 0) ? buf[--bufp] : getchar();
+/* get a (possibly pushed back) character */
+int getch(void) 
+{
+    return (buffer_pointer > 0) ? buf[--buffer_pointer] : getchar();
 }
 
