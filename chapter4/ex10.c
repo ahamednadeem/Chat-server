@@ -1,29 +1,27 @@
-#include<stdio.h>
-#include<stdlib.h> 
-#include<ctype.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
 
-#define MAXOP 100
 #define NUMBER '0'
 #define MAXVAL 100
 #define MAXLINE 100
 
-int getop(char []);
+int getop(char[]);
 void push(double);
 int mgetline(char line[], int limit);
 double pop(void);
-int sp = 0;
+
+int stack_pointer = 0;
 double val[MAXVAL];
 
-
-int li = 0;  
-char line[MAXLINE]; 
+int li = 0;
+char line[MAXLINE];
 
 int main(void) 
 {
     int type;
     double op2;
-    char s[MAXOP];
-    
+    char s[MAXLINE];  // Change from MAXOP to MAXLINE
 
     while ((type = getop(s)) != EOF) 
     {
@@ -58,35 +56,28 @@ int main(void)
     return 0;
 }
 
-
-
-
 void push(double f) 
 {
-    if (sp < MAXVAL)
-        val[sp++] = f;
+    if (stack_pointer < MAXVAL)
+        val[stack_pointer++] = f;
     else
-        printf("error: stack full,can't push %g\n", f);
+        printf("error: stack full, can't push %g\n", f);
 }
 
 double pop(void) 
 {
-    if (sp > 0)
-        return val[--sp];
+    if (stack_pointer > 0)
+        return val[--stack_pointer];
     else 
     {
-        printf("error: stack empty \n");
+        printf("error: stack empty\n");
         return 0.0;
     }
 }
 
-
-
-
-
 int getop(char s[]) 
 {
-    int c, i;
+    int character, i;
 
     if (line[li] == '\0')
         if (mgetline(line, MAXLINE) == 0)
@@ -94,19 +85,19 @@ int getop(char s[])
         else
             li = 0;
 
-    while ((s[0] = c = line[li++]) == ' ' || c == '\t');
+    while ((s[0] = character = line[li++]) == ' ' || character == '\t');
 
     s[1] = '\0';
 
-    if (!isdigit(c) && c != '.')
-        return c;
+    if (!isdigit(character) && character != '.')
+        return character;
 
     i = 0;
 
-    if (isdigit(c))
-        while (isdigit(s[++i] = c = line[li++]));
-    if (c == '.')
-        while (isdigit(s[++i] = c = line[li++]));
+    if (isdigit(character))
+        while (isdigit(s[++i] = character = line[li++]));
+    if (character == '.')
+        while (isdigit(s[++i] = character = line[li++]));
 
     s[i] = '\0';
 
@@ -117,15 +108,16 @@ int getop(char s[])
 
 int mgetline(char s[], int lim) 
 {
-    int i, c;
+    int i, character;
 
-    for (i = 0; i < lim - 1 && (c = getchar()) != EOF && c != '\n'; ++i)
-        s[i] = c;
+    for (i = 0; i < lim - 1 && (character = getchar()) != EOF && character != '\n'; ++i)
+        s[i] = character;
 
-    if (c == '\n')
-        s[i++] = c;
+    if (character == '\n')
+        s[i++] = character;
 
     s[i] = '\0';
 
     return i;
 }
+
