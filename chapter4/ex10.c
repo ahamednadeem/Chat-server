@@ -21,7 +21,7 @@ int main(void)
 {
     int type;
     double op2;
-    char s[MAXLINE];  // Change from MAXOP to MAXLINE
+    char s[MAXLINE];  
 
     while ((type = getop(s)) != EOF) 
     {

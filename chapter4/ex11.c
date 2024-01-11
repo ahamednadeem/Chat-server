@@ -2,7 +2,6 @@
 #include<stdlib.h>
 #include<ctype.h>
 
-#define MAXOP 100
 #define NUMBER '0'
 #define MAXVAL 100
 #define BUFSIZE 100
@@ -21,7 +20,7 @@ int main(void)
 {
     int type;
     double op2;
-    char s[MAXOP];
+    char s[MAXVAL];
 
     while ((type = getop(s)) != EOF) 
     {
@@ -55,10 +54,6 @@ int main(void)
     }
     return 0;
 }
-
-
-
-
 
 
 void push(double f) 
