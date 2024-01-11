@@ -28,7 +28,7 @@ int getint(int *pn)
 
 	while(isspace(character = getch())); //get input until we get a non-space character
 	
-	if(!isdigit(character) && character != '+' && character != '-')
+	if(!isdigit(character) && character != '+' && character != '-' && character != EOF)
 	{
 		ungetch(character);
 		return -1;
