@@ -1,37 +1,35 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include<math.h>
+#include <math.h>
 
-
-#define MAX_OPERATOR 100
-#define OPERAND '0'
+#define MAXVAL 100
+#define NUMBER '0'
 #define BUFFER_SIZE 100
-#define MAX_STACK_SIZE 100
 
-char buffer[BUFFER_SIZE];
+char buf[BUFFER_SIZE];
 int buffer_index = 0;
 int stack_pointer = 0;
-double stack[MAX_STACK_SIZE];
+double stack[MAXVAL];
 
-int get_operator(char[]);
+int getop(char[]);
 void push(double);
 double pop(void);
 
-int get_character(void);
-void unget_character(int);
+int getch(void);
+void ungetch(int);
 
 int main(void) 
 {
-    int operator_type, previous_operator = 0;
+    int type, previous_type = 0;
     double operand2, result;
-    char input[MAX_OPERATOR];
+    char input[MAXVAL];
     double variables[26];
 
-    while ((operator_type = get_operator(input)) != EOF) 
+    while ((type = getop(input)) != EOF) 
     {
-        switch (operator_type) {
-            case OPERAND:
+        switch (type) {
+            case NUMBER:
                 push(atof(input));
                 break;
             case '+':
@@ -53,8 +51,8 @@ int main(void)
                 break;
             case '=':
                 pop();
-                if (previous_operator >= 'A' && previous_operator <= 'Z')
-                    variables[previous_operator - 'A'] = pop();
+                if (previous_type >= 'A' && previous_type <= 'Z')
+                    variables[previous_type - 'A'] = pop();
                 else
                     printf("error: no variable name\n");
                 break;
@@ -63,22 +61,22 @@ int main(void)
                 printf("\t%.8g\n", result);
                 break;
             default:
-                if (operator_type >= 'A' && operator_type <= 'Z')
-                    push(variables[operator_type - 'A']);
-                else if (operator_type == 'v')
+                if (type >= 'A' && type <= 'Z')
+                    push(variables[type - 'A']);
+                else if (type == 'v')
                     push(result);
                 else
                     printf("error: unknown command %s\n", input);
                 break;
         }
-        previous_operator = operator_type;
+        previous_type = type;
     }
     return 0;
 }
 
 void push(double value) 
 {
-    if (stack_pointer < MAX_STACK_SIZE)
+    if (stack_pointer < MAXVAL)
         stack[stack_pointer++] = value;
     else
         printf("error: stack full, can't push %g\n", value);
@@ -94,40 +92,40 @@ double pop(void)
     }
 }
 
-int get_operator(char input[]) 
+int getop(char input[]) 
 {
-    int character, index = 0;
+    int character, i = 0;
 
-    while ((input[0] = character = get_character()) == ' ' || character == '\t');
+    while ((input[0] = character = getch()) == ' ' || character == '\t');
 
     input[1] = '\0';
     if (!isdigit(character) && character != '.')
         return character;
 
-    index = 0;
+    i = 0;
     if (isdigit(character))
-        while (isdigit(input[++index] = character = get_character()));
+        while (isdigit(input[++i] = character = getch()));
 
     if (character == '.')
-        while (isdigit(input[++index] = character = get_character()));
+        while (isdigit(input[++i] = character = getch()));
 
-    input[index] = '\0';
+    input[i] = '\0';
     if (character != EOF)
-        unget_character(character);
+        ungetch(character);
 
-    return OPERAND;
+    return NUMBER;
 }
 
-int get_character(void) 
+int getch(void) 
 {
-    return (buffer_index > 0) ? buffer[--buffer_index] : getchar();
+    return (buffer_index > 0) ? buf[--buffer_index] : getchar();
 }
 
-void unget_character(int c) 
+void ungetch(int c) 
 {
     if (buffer_index >= BUFFER_SIZE)
-        printf("unget_character: too many characters\n");
+        printf("ungetch: too many characters\n");
     else
-        buffer[buffer_index++] = c;
+        buf[buffer_index++] = c;
 }
 

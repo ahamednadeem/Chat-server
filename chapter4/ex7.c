@@ -44,9 +44,7 @@ int mgetline(char s[], int lim)
 void ungets(char s[]) 
 {
     int i;
-
     i = strlen(s);
-
     while (i > 0)
         ungetch(s[--i]);
 }
