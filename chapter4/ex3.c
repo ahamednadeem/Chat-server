@@ -10,7 +10,7 @@
 
 int stack_pointer = 0;
 int buffer_pointer = 0; 
-double val[MAXVAL];
+double [MAXVAL];
 char buf[BUFSIZE];
 
 

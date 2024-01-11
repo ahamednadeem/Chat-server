@@ -1,202 +1,199 @@
+#include <ctype.h>
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
-#include <math.h>
 
-#define MAX_STACK_SIZE 100
+#define MAXOP 100
 #define NUMBER '0'
+#define NAME 'n'
 #define BUFSIZE 100
+#define MAXVAL 100
 
+int stack_pointer = 0;
+double stack[MAXVAL];
+char buffer[BUFSIZE];
+int buffer_pointer = 0;
 
-int stack_pointer;
-double stack[MAX_STACK_SIZE];
-char buffer[100];
-int buffer_index = 0;
-
-void push(double value);
-double pop(void);
-int get_token(char token[]);
-void print_top(void);
-void duplicate_top(void);
-void swap_top_two(void);
-void clear_stack(void);
 int getch(void);
-void ungetch(int c);
+void ungetch(int);
+int getop(char[]);
+void push(double);
+double pop(void);
+void mathfnc(char[]);
+void clear_stack(void);
 
-int main(void) 
+int main(void)
 {
     int type;
-    double op2;
-    char token[100];
+    double op2, op1;
+    char s[MAXOP];
 
-    while ((type = get_token(token)) != EOF) 
+    while ((type = getop(s)) != EOF)
     {
-        switch (type) 
+        switch (type)
         {
-            case NUMBER:
-                push(atof(token));
-                break;
-            case '+':
-                push(pop() + pop());
-                break;
-            case '*':
-                push(pop() * pop());
-                break;
-            case '-':
-                op2 = pop();
-                push(pop() - op2);
-                break;
-            case '/':
-                op2 = pop();
-                if (op2 != 0.0)
-                    push(pop() / op2);
-                else
-                    printf("error: zero divisor\n");
-                break;
-            case '%':
-                op2 = pop();
-                if (op2 != 0.0)
-                    push(fmod(pop(), op2));
-                else
-                    printf("error: zero divisor\n");
-                break;
-            case 'p':
-                print_top();
-                break;
-            case 'd':
-                duplicate_top();
-                break;
-            case 's':
-                swap_top_two();
-                break;
-            case 'c':
-                clear_stack();
-                break;
-            case '\n':
-                printf("\t%.8g\n", pop());
-                break;
-            case 'sin':
-                push(sin(pop()));
-                break;
-            case 'exp':
-                push(exp(pop()));
-                break;
-            case 'pow':
-                op2 = pop();
-                push(math.pow(pop(), op2));
-                break;
-            default:
-                printf("error: unknown command or invalid input %s\n", token);
-                break;
+        case NUMBER:
+            push(atof(s));
+            break;
+        case NAME:
+            mathfnc(s);
+            break;
+        case '+':
+            push(pop() + pop());
+            break;
+        case '*':
+            push(pop() * pop());
+            break;
+        case '-':
+            op2 = pop();
+            push(pop() - op2);
+            break;
+        case '/':
+            op2 = pop();
+            if (op2 != 0.0)
+                push(pop() / op2);
+            else
+                printf("error: zero divisor\n");
+            break;
+        case '%':
+            op2 = pop();
+            if (op2 != 0.0)
+                push(fmod(pop(), op2));
+            else
+                printf("error: zero divisor\n");
+            break;
+        case '?':
+            op2 = pop();
+            printf("\t%.8g\n", op2);
+            push(op2);
+            break;
+        case 'c':
+            clear_stack();
+            break;
+        case 'd':
+            op2 = pop();
+            push(op2);
+            push(op2);
+            break;
+        case 's':
+            op1 = pop();
+            op2 = pop();
+            push(op1);
+            push(op2);
+            break;
+        case '\n':
+            printf("\t%.8g\n", pop());
+            break;
+        default:
+            printf("error: unknown command %s\n", s);
+            break;
         }
     }
-
     return 0;
 }
 
-void push(double value) 
+void push(double f)
 {
-    if (stack_pointer < MAX_STACK_SIZE)
-        stack[stack_pointer++] = value;
+    if (stack_pointer < MAXVAL)
+        stack[stack_pointer++] = f;
     else
-        printf("error: stack full, can't push %g\n", value);
+        printf("error: stack full, can't push %g\n", f);
 }
 
-double pop(void) 
+double pop(void)
 {
     if (stack_pointer > 0)
         return stack[--stack_pointer];
-    else 
+    else
     {
         printf("error: stack empty\n");
         return 0.0;
     }
 }
 
-int get_token(char token[]) 
-{
-    int character, index = 0;
-
-    while ((token[0] = character = getch()) == ' ' || character == '\t');
-    token[1] = '\0';
-
-    if (!isdigit(character) && character != '.' && character != '-') {
-        return character;
-    }
-
-    if (character == '-' || isdigit(character)) {
-        while (isdigit(token[++index] = character = getch()));
-    }
-
-    if (character == '.') {
-        while (isdigit(token[++index] = character = getch()));
-    }
-
-    token[index] = '\0';
-
-    if (character != EOF) {
-        ungetch(character);
-    }
-
-    return (strcmp(token, "-") == 0) ? '-' : NUMBER;
-}
-
-void print_top(void) 
-{
-    if (stack_pointer > 0)
-        printf("Top of stack: %.8g\n", stack[stack_pointer - 1]);
-    else
-        printf("error: stack empty\n");
-}
-
-void duplicate_top(void) 
-{
-    if (stack_pointer > 0) 
-    {
-        double top_value = stack[stack_pointer - 1];
-        push(top_value);
-        printf("Duplicated top of stack: %.8g\n", top_value);
-    } else 
-    {
-        printf("error: stack empty\n");
-    }
-}
-
-void swap_top_two(void) 
-{
-    if (stack_pointer >= 2) 
-    {
-        double top_value = pop();
-        double second_value = pop();
-        push(top_value);
-        push(second_value);
-        printf("Swapped top two elements of stack\n");
-    } else 
-    {
-        printf("error: insufficient elements in stack to swap\n");
-    }
-}
-
-void clear_stack(void) 
+void clear_stack(void)
 {
     stack_pointer = 0;
-    printf("Stack cleared\n");
 }
 
-char buf[BUFSIZE];
-int bufp = 0;
 
-int getch(void) 
+int getop(char s[])
 {
-    return (bufp > 0) ? buf[--bufp] : getchar();
+    int i, character;
+
+    while ((s[0] = character = getch()) == ' ' || character == '\t');
+    s[1] = '\0';
+
+    i = 0;
+    if (islower(character))
+    {
+        while (islower(s[++i] = character = getch()))
+            ;
+        s[i] = '\0';
+        if (character != EOF)
+            ungetch(character);
+        if (strlen(s) > 1)
+            return NAME;
+        else
+            return s[0];
+    }
+
+    if (!isdigit(character) && character != '.' && character != '-')
+        return character;
+
+    if (character == '-')
+        if (isdigit(character = getch()) || character == '.')
+            s[++i] = character;
+        else
+        {
+            if (character != EOF)
+                ungetch(character);
+            return '-';
+        }
+
+    if (isdigit(character))
+        while (isdigit(s[++i] = character = getch()))
+            ;
+
+    if (character == '.')
+        while (isdigit(s[++i] = character = getch()))
+            ;
+
+    s[i] = '\0';
+    if (character != EOF)
+        ungetch(character);
+    return NUMBER;
 }
 
-void ungetch(int c) 
+int getch(void)
 {
-    if (bufp >= BUFSIZE)
+    return (buffer_pointer > 0) ? buffer[--buffer_pointer] : getchar();
+}
+
+void ungetch(int c)
+{
+    if (buffer_pointer >= BUFSIZE)
         printf("ungetch: too many characters\n");
     else
-        buf[bufp++] = c;
+        buffer[buffer_pointer++] = c;
+}
+
+void mathfnc(char s[])
+{
+    double op2;
+    if (strcmp(s, "sin") == 0)
+        push(sin(pop()));
+    else if (strcmp(s, "cos") == 0)
+        push(cos(pop()));
+    else if (strcmp(s, "exp") == 0)
+        push(exp(pop()));
+    else if (strcmp(s, "pow") == 0)
+    {
+        op2 = pop();
+        push(pow(pop(), op2));
+    }
+    else
+        printf("error: %s is not supported\n", s);
 }
 
