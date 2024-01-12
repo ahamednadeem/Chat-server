@@ -22,9 +22,11 @@ void ungetch(int character)
 }
 
 
-int getfloat(int *pn)
+int getfloat(float *pn)
 {
-	int character, sign;
+	int sign, character;
+	
+	float fractional = 1;
 
 	while(isspace(character = getch())); //get input until we get a non-space character
 	
@@ -39,13 +41,24 @@ int getfloat(int *pn)
 	
 	if(character == '+' || character == '-')
 		character = getch();
-		
-	if(!isdigit(character)) //to make sure the character after '+' or '-' is a digit
-		return 0;
 
 	for(*pn = 0; isdigit(character); character = getch())
-		*pn = 10 * *pn + (character - '0');
+		*pn = 10 * *pn + (character - '0');    //for integer part
+	
+	if(character == '.')
+		character = getch();
+	
+	for(; isdigit(character); character = getch())
+	{
+		*pn = 10 * *pn + (character - '0');    //for fractional part
+		fractional *= 10.0;
+	}
+	
+	
+		
 	*pn *= sign;
+	*pn /= fractional;
+	
 
 	if(character != EOF)
 		ungetch(character);
@@ -55,10 +68,15 @@ int getfloat(int *pn)
 
 void main()
 {
-	int i, s, array[SIZE];
+	int i, count;
+	float array[SIZE];
 
-	for(i = 0; i < SIZE && getint(&array[i]) != EOF; i++)
-		printf("In array index %d : %f\n", i, array[i]);
+	for(i = 0; i < SIZE && getfloat(&array[i]) != EOF; i++)
+		count++;
+	
+	for(i = 0; i < count; i++)
+		printf("ELEMENT AT INDEX %d : %f\n", i, array[i]);
+	
 	
 }
 
