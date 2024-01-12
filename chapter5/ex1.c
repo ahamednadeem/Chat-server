@@ -8,7 +8,6 @@ char buf[BUFSIZE];
 int buffer_pointer = 0;
 int flag = 0;
 
-
 int getch(void)
 {
 	return (buffer_pointer > 0) ? buf[--buffer_pointer] : getchar();
@@ -42,11 +41,14 @@ int getint(int *pn)
 		character = getch();
 		
 	if(!isdigit(character)) //to make sure the character after '+' or '-' is a digit
-		flag = 1;
-		return character;
+		{
+			flag = 1;
+			return character;
+		}
 
 	for(*pn = 0; isdigit(character); character = getch())
 		*pn = 10 * *pn + (character - '0');
+
 	*pn *= sign;
 
 	if(character != EOF)
@@ -57,19 +59,24 @@ int getint(int *pn)
 
 void main()
 {
-	int i, s, array[SIZE];
+	int i, array[SIZE], count = 0;
 
-	for(i = 0; i < SIZE && (s = getint(&array[i])) != EOF; i++)
+	for(i = 0; i < SIZE && (getint(&array[i])) != EOF; i++)
 	{
-		if (flag)
+	
+		if(flag)
 		{
-		
-			printf("Invalid Input in array index %d : %c\n", i, s);
+			printf("Invalid input at index %d\n", i);
 			break;
 		}
-		printf("In array index %d : %d\n", i, s);
 	
-	}		
+	count++;
+        }
+	
+	
+	
+	for(i = 0; i < count; i++)
+		printf("index %d : %d \n", i, array[i]);		
 }
 
 
