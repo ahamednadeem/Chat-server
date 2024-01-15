@@ -29,33 +29,37 @@ void main()
 
 int day_of_year(int year, int month, int day) 
 {
-    int i, leap;
+    int leap;
+    char *p;
+    
     leap = year % 4 == 0 && year % 100 != 0 || year % 400 == 0;
     
     if (year < 1 || month < 1 || month > 12 || day < 1 || day > daytab[leap][month])  //condition to check for errors
         return -1;
+    p = daytab[leap];
         
-    for (i = 1; i < month; i++)
-        day += daytab[leap][i];
-
+    while(--month)
+    	day += *++p;
     return day;
+    	
 }
 
 /* month,day from day of year */
 
 int month_day(int year, int yearday, int *month, int *day) 
 {
-    int i, leap;
+    int leap;
+    char *p;
     leap = year % 4 == 0 && year % 100 != 0 || year % 400 == 0;
 
     if (year < 1 || yearday < 1 || yearday > (leap ? 366 : 365)) //condition to check for errors
         return 0;
+
+    p = daytab[leap];
+    while(yearday > *++p)	
+    	yearday -= *p;
     
-
-    for (i = 1; yearday > daytab[leap][i]; i++)
-        yearday -= daytab[leap][i];
-
-    *month = i;
+    *month = p - *(daytab + leap);
     *day = yearday;
     
     return 1;
