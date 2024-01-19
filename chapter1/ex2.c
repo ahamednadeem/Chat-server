@@ -1,20 +1,12 @@
+/*find out what happens when prints 's argument string contains
+\c, where c is some character not listed above.*/
+
+
 #include <stdio.h>
 
-int main() {
-    int lower, upper, step;
-    int celsius, fahr;
-
-    lower = 0;
-    upper = 300;
-    step = 20;
-
-    fahr = lower;
-
-    while (fahr <= upper) {
-        celsius = 5 * (fahr - 32) / 9;
-        printf("%d\t%d\n", fahr, celsius);
-        fahr = fahr + step;
-    }
-
-    return 0;
+int main()
+{
+    printf("\c, \p, \k, \l");
 }
+
+// we are getting error messages

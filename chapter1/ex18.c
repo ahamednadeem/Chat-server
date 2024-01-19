@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#define MAXLINE 1000
+#define MAXLINE 10
 
 int getlines(char line[], int lim);
 int remove_trail(char rline[]);
