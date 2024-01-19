@@ -31,7 +31,7 @@ int main(int argc, char **argv)
     
     root = NULL;
     while(getword(word, MAXWORD) != EOF)
-        if(isalpha(word[0]) && noisewords(word) == -1)  //removing if any noise words are entered
+        if(isalpha(word[0]) && noisewords(word) == -1)  //removing if any noise words 
             root = addtree(root, word, linenum);
         else if(word[0] == '\n')
             linenum++;
