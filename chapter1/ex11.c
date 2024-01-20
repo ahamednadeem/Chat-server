@@ -1,23 +1,28 @@
+/* test the word count program */
+
 #include <stdio.h>
+
 #define IN 1
 #define OUT 0
+
 void main()
 {
-int c, nl, nw, nc, state;
-state = OUT;
-nl = nw = nc = 0;
+int c, newline, new_word, new_character, state;
+state = OUT;                                       // this represents whether we are currently inside the word or not 
+newline = new_word = new_character = 0;
 while ((c = getchar()) != EOF)
 {
-	++nc;
+	++new_character;			     //counting the no of characters
         if (c == '\n')
-        	++nl;
+        	++newline;                         //counting the no of lines
 	if (c == ' ' || c == '\n' || c =='\t')
 		state = OUT;
-	else if (state == OUT) {
+	else if (state == OUT) 
+	{
 		state = IN;
-		++nw;
+		++new_word;                       //counting the no of words
+        }
 }
-}
-printf("%d %d %d\n", nl, nw, nc);
+	printf("%d %d %d\n", newline, new_word, new_character);
 }
 

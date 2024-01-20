@@ -1,19 +1,20 @@
+/*Write a program to print the corresponding Celsius to Fahrenheit table. */
+
+
 #include<stdio.h>
-int main()
+void main()
 {
-	float farh, celcius;
+	float celcius, farh;
 	int lower = 0;
-	int upper = 300;
+	int upper = 300;  
 	int size = 20;
 
-	celcius = 0;
-	while(celcius <= upper)
+	celcius = lower;
+	while(celcius <= upper)  
 	{
-		printf("%3.0f %6.1f\n", celcius, (9 * celcius / 5) + 32);
+		farh = (9 * celcius / 5) + 32;    //celcius is converted to farhenheit
+		printf("%3.0f %6.1f\n", celcius, farh);
 		celcius += size;
 	}
-
-	return 0;
-
 }
 
