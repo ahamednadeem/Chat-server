@@ -1,3 +1,5 @@
+/* program to remove trailing blanks and tabs from each line of input */
+
 #include <stdio.h>
 #include<stdlib.h>
 
@@ -27,7 +29,7 @@ int _getline(char line[], int lim)
     		line[i] = character;
     	else
     	{
-    		printf("Word Limit Exceeded");
+    		printf("Word Limit Exceeded\n");
     		exit(0);
     	}
     }
