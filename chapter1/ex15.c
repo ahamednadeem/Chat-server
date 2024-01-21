@@ -1,3 +1,6 @@
+/*Rewrite the temperature conversion program of Section 1.2 to use a function
+for conversion.*/
+
 #include<stdio.h>
 
 //celcius to farhenheit
@@ -27,7 +30,7 @@ void main()
 	celcius = upper;
 	while(celcius >= lower)
 	{
-		printf("%3.0f %6.1f\n", celcius, celcius_to_farhenheit(celcius));
+		printf("%3.0f %15.1f\n", celcius, celcius_to_farhenheit(celcius));
 		celcius -= size;
 	}
 	
@@ -35,7 +38,7 @@ void main()
 	farh = lower;
 	while(farh <= upper)
 	{
-		printf("%3.0f %6.1f\n", farh, farhenheit_to_celcius(farh));
+		printf("%3.0f %15.1f\n", farh, farhenheit_to_celcius(farh));
 		farh += size;
 	}
 }
