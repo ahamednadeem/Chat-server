@@ -1,30 +1,32 @@
+/* Program to remove comments from a C Program. */
+
 #include <stdio.h>
 
-void rcomment(int c);
+void iscomment(int);
+void multiline_comment();  
+void singleline_comment();
 
-void incomment();
-void incomment2();
 
+int main() 
+{
+    int character, d;
 
-int main(void) {
-    int c, d;
-
-    while ((c = getchar()) != EOF)
-        rcomment(c);
+    while ((character = getchar()) != EOF)
+        iscomment(character);
 
     return 0;
 }
 
-void rcomment(int c) {
+void iscomment(int c)    //to check if it is in comment or not
+{
     int d;
 
-    if (c == '/') {
+    if (c == '/') 
+    {
         if ((d = getchar()) == '*')
-            incomment();
+            multiline_comment();
         else if (d == '/') 
-        {
-            incomment2();
-        } 
+            singleline_comment();
         else 
         {
             putchar(c);
@@ -35,23 +37,24 @@ void rcomment(int c) {
         putchar(c);
 }
 
-void incomment() {
+void multiline_comment()    //when it is in multiline comment
+{
     int c, d;
 
     c = getchar();
     d = getchar();
 
-    while (c != '*' || d != '/') 
+    while (c != '*' || d != '/')    //if c == * and d == / only then this loop gets terminated and depicts the end of the loop
     {
         c = d;
         d = getchar();
     }
 }
 
-void incomment2()
-{
-	while(getchar() != '\n');
-}
+void singleline_comment()     //when it is in single line comment
+	{
+		while(getchar() != '\n');    //comment ends when we enter newline character
+	}
 	
 
 
