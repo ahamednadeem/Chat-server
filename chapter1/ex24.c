@@ -1,47 +1,75 @@
 #include <stdio.h>
 
 int brace, brack, paren;
+
+void incomment();
+void inquote(int c);
 void search(int c);
 
-int main() 
+int flag = 0;
+int brace, brack, paren;
+
+int main(void) 
 {
     int c;
 
-    extern int brace, brack, paren;
-
     while ((c = getchar()) != EOF)
-       search(c);
+        if (c == '/')
+            if ((c = getchar()) == '*')
+                incomment();
+            else
+                search(c);
+                
+        else if (c == '\'' || c == '"')
+            inquote(c);   
+        else
+            search(c);
 
-    if (brace < 0) 
+    if (brace != 0) 
     {
         printf("Unmatched Braces\n");
         brace = 0;
-    } 
-    else if (brack < 0) 
+        flag = 1;
+    }
+    if (brack != 0) 
     {
         printf("Unmatched brackets\n");
         brack = 0;
+        flag = 1;
     } 
-    else if (paren < 0) 
+    if (paren != 0) 
     {
         printf("Unmatched parenthesis\n");
         paren = 0;
+        flag = 1;
     }
-
-    if (brace > 0)
-        printf("Unmatched braces\n");
-    else if (brack > 0)
-        printf("Unmatched brackets\n");
-    else if (paren > 0)
-        printf("Unmatched parenthesis\n");
-
+	
+    if(!flag)
+    	printf("No errors");
     return 0;
 }
 
-
-void search(int c)
+void incomment() //when it is in comments
 {
-    extern int brace, brack, paren;
+    int c, d;
+    c = getchar();
+    d = getchar();
+
+    while (c != '*' || d != '/') 
+    {
+        c = d;
+        d = getchar();
+    }
+}
+
+void inquote(int c)   //when it is in quotes
+{
+    int d;
+    while ((d = getchar()) != c);
+}
+
+void search(int c)   //searches for unmatched braces, brakets and paranthesis
+{
 
     if (c == '{')
         --brace;
