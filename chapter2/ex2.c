@@ -1,4 +1,7 @@
+/* Write a loop equivalent to the for loop above without using && or || . */
+
 #include<stdio.h>
+
 #define maximum_limit 100
 
 /*for(i=0; i < lim -1 && (c=getchar()) != '\n' && c != EOF; ++i)
@@ -6,6 +9,8 @@
   
   Equivalent of this without using && or ||
 */
+
+
 void main()
 {
 	int character, i = 0;
@@ -18,10 +23,10 @@ void main()
 	   if(character == '\n')
 	      break;
 	   
-	   s[i] = character;
-	   i++;
+	   s[i++] = character;
+	  
 	}
 
-printf("%s", s);
+printf("%s\n", s);
 }
 

@@ -1,3 +1,6 @@
+/* program to determine the ranges of char , short , int , and long
+variables, both signed and unsigned  */
+
 #include <stdio.h>
 void printUnsignedRange(size_t bytes)
 {
