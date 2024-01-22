@@ -14,7 +14,7 @@
 void main()
 {
 	int character, i = 0;
-	char s[1000];
+	char s[maximum_limit];
 	while((character = getchar())!= EOF)
 	{
 	   if(i >= maximum_limit - 1)
