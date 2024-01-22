@@ -1,3 +1,6 @@
+/* check a C program for rudimentary syntax errors like
+unmatched parentheses, brackets and braces */
+
 #include <stdio.h>
 
 int brace, brack, paren;
@@ -6,7 +9,7 @@ void incomment();
 void inquote(int c);
 void search(int c);
 
-int flag = 0;
+int flag = 0;          
 int brace, brack, paren;
 
 int main(void) 
