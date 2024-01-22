@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 #define MAXLINE 100 // maximum number of chars in one line 
-#define OCTLEN 6    // length of an octal value 
+#define OCTLEN 6    // length of an octal value + width of 3
 
 //increment position counter for output 
 int inc(int pos, int n) 
