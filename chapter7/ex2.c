@@ -1,3 +1,7 @@
+/* program that will print arbitrary input in a sensible way. As a minimum,
+it should print non-graphic characters in octal or hexadecimal according to local custom, and
+break long text lines. */
+
 #include <ctype.h>
 #include <stdio.h>
 
@@ -27,7 +31,8 @@ int main(void)
         {
             pos = inc(pos, OCTLEN);
             printf("%03o", c);
-            										// newline character 
+            										
+            				// newline character 
           if (c == '\n')
           {
                 pos = 0;
