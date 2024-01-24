@@ -1,10 +1,13 @@
+/* pattern finding program of Chapter 5 to take its input from a set of
+named files or, if no files are named as arguments, from the standard input. */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #define MAXLINE 1000
 int i;
-void find_pattern(FILE *file, const char *pattern, int printFileName, char *file_name) 
+void find_pattern(FILE *file, const char *pattern, int printFileName, char *file_name) //finds if there is a pattern match
 {
     char line[MAXLINE];
     int lineNumber = 0;
@@ -59,4 +62,3 @@ int main(int argc, char *argv[])
 
     return 0;
 }
-
