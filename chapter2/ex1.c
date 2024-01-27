@@ -4,8 +4,8 @@ variables, both signed and unsigned  */
 #include <stdio.h>
 void printUnsignedRange(size_t bytes)
 {
-	int bits = 8*bytes;
-	unsigned int to = ((1 << (bits-1)) - 1) + (1 << (bits-1)) ;
+	int bits = 8 * bytes;
+	unsigned int to =  2 * (1 << (bits -1)) - 1;
 	printf(" range is from %u to %u \n", 0, to);
 }
 
@@ -20,14 +20,17 @@ void printSignedRange(size_t bytes)
 int main()
 {
 	printf("signed char: ");
-	printSignedRange(sizeof(char));
+	printSignedRange(sizeof(signed char));
 	
 	printf("signed int: ");
-	printSignedRange(sizeof(int));
+	printSignedRange(sizeof(signed int));
 	
 	printf("signed short int: ");
-	printSignedRange(sizeof(short int));
+	printSignedRange(sizeof(signed short int));
+	
 
+	printf("\n");	
+	
 	printf("unsigned char: ");
 	printUnsignedRange(sizeof(unsigned char));
 
@@ -36,6 +39,7 @@ int main()
 
 	printf("unsigned short int: ");
 	printUnsignedRange(sizeof(unsigned short int));
+	
 
 	return 0;
 }
