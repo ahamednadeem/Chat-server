@@ -4,7 +4,7 @@ through 9 , a through f , and A through F . */
 
 #include <stdio.h>
 #include<stdlib.h>
-#define MAXLINE 80
+#define MAXLINE 10
 
 
 int htoi(const char s[]);
@@ -17,6 +17,9 @@ int main()
     	int value;
 
     	_getline(line, MAXLINE);
+    	
+    	printf("%s\n", line);
+    	
     	value = htoi(line);
     	printf("The value is %d \n", value);
 
@@ -27,7 +30,7 @@ void _getline(char line[], int lim)   //get input from the user
 {
     int character, i;
 
-    for (i = 0; i < lim - 1 && (character = getchar()) != EOF && character != '\n'; ++i)
+    for (i = 0; i < lim  && (character = getchar()) != EOF && character != '\n'; ++i)
         line[i] = character;
 
     if (character == '\n') 

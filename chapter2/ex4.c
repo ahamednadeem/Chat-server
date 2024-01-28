@@ -1,8 +1,13 @@
+/* eletes each character in
+s1 that matches any character in the string s2 . */
+
+
 #include <stdio.h>
-#define MAXLINE 1000
+#include<stdlib.h>
+
+#define MAXLINE 10
 
 int mgetline(char line[], int lim);
-
 void squeeze(char line1[], char line2[], char line3[]);
 
 int main() 
@@ -15,21 +20,26 @@ int main()
     return 0;
 }
 
-int mgetline(char s[], int lim) 
+int mgetline(char s[], int lim)  //get input from the user
 {
     int i, character;
-    for (i = 0; i < lim - 1 && (character = getchar()) != EOF && character != '\n'; ++i)
-    {
+    for (i = 0; i < lim && (character = getchar()) != EOF && character != '\n'; ++i)
         s[i] = character;
-    }
-    if (character == '\n')
+    
+    if(i >= lim)
     {
-        s[i++] = character;
+    	printf("Line limit Exceeded \n");
+    	exit(0);
     }
+    
+    
+    if (character == '\n')
+        s[i++] = character;
+  
     s[i] = '\0';
 }
 
-void squeeze(char line1[], char line2[], char line3[]) 
+void squeeze(char line1[], char line2[], char line3[])  //removes each character in line1 that is there in line2
 {
     int i, j, k;
     k = 0;
@@ -41,7 +51,7 @@ void squeeze(char line1[], char line2[], char line3[])
         {
         	if(line1[i] == line2[j])
         	{
-        		flag = 1;
+        		flag = 1;  //flag is used to mark if there is occurances of any character of line2 in line1
         		break;
         	}
         }
