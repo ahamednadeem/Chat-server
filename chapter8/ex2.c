@@ -32,7 +32,6 @@ int _fillbuf(FILE *);
 
 #define getc(p) (--(p)->cnt >= 0 ? (unsigned char)*(p)->ptr++ : _fillbuf(p))
 #define putc(x, p) write(p->fd, &x, 1);
-
 #define putchar(x) putc(x, stdout)
 
 
@@ -112,7 +111,7 @@ FILE _iob[OPEN_MAX] = { { 0, (char *)0, (char *)0, 1, 0, 0, 0, 0, 0 },   //stdin
 int main(int argc, char *argv[])
 {
 	FILE *fp;
-	char c;
+	int c;
 
 	while (--argc > 0)
 		if ((fp = fopen(*++argv, "r")) == NULL)
