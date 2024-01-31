@@ -6,8 +6,6 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#undef NULL
-#define NULL 0
 #define EOF (-1)
 #define OPEN_MAX 20
 
@@ -22,9 +20,6 @@ typedef struct _iobuf {
 
 enum flags { _READ = 01, _WRITE = 02, _UNBUF = 04, _EOF = 010, _ERR = 020 };
 
-#define feof(p) (((p)->flag & _EOF) != 0)
-#define ferror(p) (((p)->flag & _ERR) != 0)
-#define fileno(p) ((p)->fd)
 #define isopen(p) ((p)->flag & (_READ | _WRITE))
 #define markclosed(p) ((p)->flag &= ~(_READ | _WRITE))
 #define notreadyfor(p, rd_wr) (((p)->flag & (rd_wr | _EOF | _ERR)) != rd_wr)
@@ -99,30 +94,35 @@ int _flushbuf(int c, FILE *fp)
 	return 0;
 }
 
-int fclose(FILE *fp)
+
+int fclose(FILE *fp) 
 {
-	int rslt = 0;
-	if (fp == NULL)
-		return EOF;
-	if (fp->flag & _WRITE)
-		rslt = fflush(fp);
-	free(fp->base);
-	fp->base = NULL;
-	if (fp->fd <= 2)
-		return rslt;
-	markclosed(fp);
-	return rslt | close(fp->fd);
+    int fd;
+    if (fp == NULL)
+        return EOF;
+
+    fd = fp->fd;
+    fflush(fp);
+    fp->cnt = 0;
+    fp->ptr = NULL;
+    if (fp->base != NULL)
+        free(fp->base);
+    fp->base = NULL;
+    fp->flag = 0;
+    fp->fd = -1;
+    return close(fd);
 }
 
-FILE *fopen(char *name, char *mode)
+
+FILE *fopen(char *name, char *mode)   //opening the file in the given mode
 {
-	int fd;
+	int fd;  //file descriptor
 	FILE *fp;
 
 	if (*mode != 'r' && *mode != 'w' && *mode != 'a')
 		return NULL;
 	for (fp = _iob; fp < _iob + OPEN_MAX; fp++)
-		if (!isopen(fp))
+		if (!isopen(fp))    //free slot available
 			break;
 	if (fp >= _iob + OPEN_MAX)
 		return NULL;
@@ -172,6 +172,7 @@ int main(int argc, char *argv[])
 	FILE *source, *destination;
 	char c, *spath, *tpath;
 
+
 	if (argc != 3)   //the contents in first file gets copied to the contents in the second file
 		return 1;
 		
@@ -184,7 +185,7 @@ int main(int argc, char *argv[])
 	if ((destination = fopen(tpath, "w")) == NULL)     // if able to open the destination path
 		return 1;
 		
-	while ((c = getc(source)) != EOF)          // copy from source to destination
+	while ((c = getc(source)) != EOF)         // copy from source to destination
 		putc(c, destination);  
 		
 	fclose(source);
@@ -192,9 +193,11 @@ int main(int argc, char *argv[])
 	if ((destination = fopen(tpath, "r")) == NULL)    //opening the destination file
 		return 1;
 	
-	while ((c = getc(destination)) != EOF)            // copy from destination to stdout 
+	while ((c = getc(destination)) != EOF)      // copy from destination to stdout 
 		putchar(c);
+		
+	
 	fflush(NULL);
-
+	
 	return 0;
-}
+} 

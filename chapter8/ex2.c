@@ -20,7 +20,7 @@ typedef struct _iobuf {
 	int err;
 	int fd;
 } FILE;
-extern FILE _iob[OPEN_MAX];
+FILE _iob[OPEN_MAX];
 
 #define stdin (&_iob[0])
 #define stdout (&_iob[1])
