@@ -83,7 +83,7 @@ int _fillbuf(FILE *fp)    //Fills the buffer
 
 	if (!fp->read || fp->eof || fp->err)
 		return EOF;
-	bufsize = fp->unbuf ? 1 : BUFSIZE;
+	bufsize = fp->unbuf ? 1 : BUFSIZE;   // if no space in buffer
 	if (fp->base == NULL)
 		if ((fp->base = (char *)malloc(bufsize)) == NULL)
 			return EOF;
