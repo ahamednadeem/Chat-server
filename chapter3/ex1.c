@@ -1,8 +1,10 @@
+/* binary search */
+
 #include<stdio.h>
-#include<time.h>
+#include<time.h>   // to comapare the run time of the program
 
 
-int binary_search(int x, int v[], int len);
+int binary_search(int x, int v[], int len);  
 
 int main() 
 {
@@ -15,13 +17,9 @@ int main()
     int arr[] = {2, 3, 9, 23, 32, 65, 87, 121, 141, 821, 1231, 2222, 2223, 2234, 2239};
     int res  = binary_search(2239, arr, 15);
     if (res == -1)
-    {
     	printf("Element not found \n");
-    }
     else
-    {
     printf("Fount at position %d \n", res);
-    }
     
     time(&end_t);
     diff_t = difftime(end_t, start_t);
@@ -30,7 +28,7 @@ int main()
     return 0;
 }
 
-int binary_search(int x, int v[], int len) 
+int binary_search(int x, int v[], int len)  //input array must be sorted
 {
     int low, high, mid;
 
@@ -38,26 +36,18 @@ int binary_search(int x, int v[], int len)
     high = len - 1;
     mid = (low + high) / 2;
 
-    while (low < high && x != v[mid]) 
+    while (low < high && x != v[mid])   //only one test condition inside the loop
     {
         if (x > v[mid])
-        {
             low = mid + 1;
-        }
         else
-        {
             high = mid - 1;
-        }
 
         mid = (low + high) / 2;
     }
 
     if (x == v[mid])
-    {
         return mid + 1;
-    }
     else
-    {
         return -1;
-    }
 }
