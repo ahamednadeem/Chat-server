@@ -1,3 +1,6 @@
+/* function itob(n,s,b) that converts the integer n into a base b
+character representation in the string s */
+
 #include <stdio.h>
 #include <string.h>
 
@@ -11,14 +14,14 @@ int main()
     int number, base;
     char str[MAXLINE];
     number = 2363;
-    base = 8;
+    base = 8;  //octal
     itob(number, str, base);
 
     printf("%s", str);
     return 0;
 }
 
-void itob(int n, char s[], int b) 
+void itob(int n, char s[], int b)   //converts integer into strings of given base
 {
     int i, j, sign;
     sign = n;
@@ -37,7 +40,7 @@ void itob(int n, char s[], int b)
     reverse(s);
 }
 
-void reverse(char s[])
+void reverse(char s[])  //reverses the input string 
 {
     int i, j, c;
     for (i = 0, j = strlen(s) - 1; i < j; i++, j--)

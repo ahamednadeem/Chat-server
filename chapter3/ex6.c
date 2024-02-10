@@ -1,3 +1,7 @@
+/* version of itoa that accepts three arguments instead of two. The third
+argument is a minimum field width */
+
+
 #include <stdio.h>
 #include <string.h>
 
@@ -17,7 +21,7 @@ int main(void)
     return 0;
 }
 
-void itoa(int n, char arr[], int width) 
+void itoa(int n, char arr[], int width)  // converts integer to string
 {
     int i, sign;
     sign = n;
@@ -40,7 +44,7 @@ void itoa(int n, char arr[], int width)
     reverse(arr);
 }
 
-void reverse(char arr[]) 
+void reverse(char arr[])   // reverse the string
 {
     int i, j, c;
     for (i = 0, j = strlen(arr) - 1; i < j; i++, j--)
