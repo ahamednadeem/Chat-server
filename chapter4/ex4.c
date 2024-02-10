@@ -1,3 +1,7 @@
+/* commands to print the top elements of the stack without popping, to
+duplicate it, and to swap the top two elements. Add a command to clear the stack.*/
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -156,10 +160,10 @@ void duplicate_top(void)
         double top_value = stack[stack_pointer - 1];
         push(top_value);
         printf("Duplicated top of stack: %.8g\n", top_value);
-    } else 
-    {
+    } 
+    else 
         printf("error: stack empty\n");
-    }
+  
 }
 
 /* swap the top two elements of the stack */
@@ -172,10 +176,10 @@ void swap_top_two(void)
         push(top_value);
         push(second_value);
         printf("Swapped top two elements of stack\n");
-    } else 
-    {
+    } 
+    else 
         printf("error: insufficient elements in stack to swap\n");
-    }
+   
 }
 
 /* clear all elements from the stack */
