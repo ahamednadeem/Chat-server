@@ -1,3 +1,5 @@
+/* Add the modulus (%) operator and provisions for negative numbers. */
+
 #include <ctype.h>
 #include <math.h>
 #include <stdio.h>
@@ -48,10 +50,10 @@ int main(void) {
                 else
                     printf("error: zero divisor\n");
                 break;
-            case '%':
+            case '%':               // we have added a case for modulus
                 op2 = pop();
                 if (op2 != 0.0)
-                    push(fmod(pop(), op2));
+                    push(fmod(pop(), op2));   // for using fmod function we require math.h function
                 else
                     printf("error: zero divisor\n");
                 break;
@@ -67,7 +69,8 @@ int main(void) {
 }
 
 /*push a value onto the stack */
-void push(double f) {
+void push(double f)   // we are using stack for storing numbers
+{
     if (stack_pointer < MAXVAL)
         val[stack_pointer++] = f;
     else
@@ -111,7 +114,7 @@ int getop(char s[]) {
 }
 
 /* push character back on input */
-void ungetch(int c) 
+void ungetch(int c)  
 {
     if (buffer_pointer >= BUFSIZE)
         printf("too many characters\n");
