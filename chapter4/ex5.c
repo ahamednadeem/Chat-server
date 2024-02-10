@@ -1,3 +1,5 @@
+/* Add access to library functions like sin , exp , and pow */
+
 #include <ctype.h>
 #include <math.h>
 #include <stdio.h>
@@ -93,7 +95,7 @@ int main(void)
     return 0;
 }
 
-void push(double f)
+void push(double f)   // push into the stack
 {
     if (stack_pointer < MAXVAL)
         stack[stack_pointer++] = f;
@@ -101,7 +103,7 @@ void push(double f)
         printf("error: stack full, can't push %g\n", f);
 }
 
-double pop(void)
+double pop(void)      // pop from the stack
 {
     if (stack_pointer > 0)
         return stack[--stack_pointer];
@@ -112,14 +114,14 @@ double pop(void)
     }
 }
 
-void clear_stack(void)
+void clear_stack(void)  // clears the stack
 {
     stack_pointer = 0;
 }
 
 
-int getop(char s[])
-{
+int getop(char s[])   // get input from the user
+{ 
     int i, character;
 
     while ((s[0] = character = getch()) == ' ' || character == '\t');
@@ -166,12 +168,12 @@ int getop(char s[])
     return NUMBER;
 }
 
-int getch(void)
+int getch(void)  // get input from the buffer or from getchar() function
 {
     return (buffer_pointer > 0) ? buffer[--buffer_pointer] : getchar();
 }
 
-void ungetch(int c)
+void ungetch(int c)  // store into the buffer
 {
     if (buffer_pointer >= BUFSIZE)
         printf("ungetch: too many characters\n");
@@ -179,7 +181,7 @@ void ungetch(int c)
         buffer[buffer_pointer++] = c;
 }
 
-void mathfnc(char s[])
+void mathfnc(char s[])  // math functions added to the program
 {
     double op2;
     if (strcmp(s, "sin") == 0)
