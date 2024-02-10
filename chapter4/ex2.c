@@ -1,3 +1,5 @@
+/* atof to handle scientific notation */
+
 #include <ctype.h>
 #include <stdio.h>
 
@@ -23,8 +25,6 @@ int main()
 
 double _atof(char s[]) //converts a string into a floating point numerical representation
 {
-    
-
     sign = (s[i] == '-') ? -1 : 1;
 
     if (s[i] == '+' || s[i] == '-')
@@ -42,7 +42,7 @@ double _atof(char s[]) //converts a string into a floating point numerical repre
         powi *= 10.0;                              
     }
 
-    if (s[i] == 'e' || s[i] == 'E')
+    if (s[i] == 'e' || s[i] == 'E')  // to check for exponent 
         i++;
     if (s[i] == '+' || s[i] == '-')
      {
