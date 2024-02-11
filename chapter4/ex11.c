@@ -1,3 +1,5 @@
+/* Modify getop so that it doesn't need to use ungetch */
+
 #include<stdio.h>
 #include<stdlib.h>
 #include<ctype.h>
@@ -56,7 +58,7 @@ int main(void)
 }
 
 
-void push(double f) 
+void push(double f)   // push the value to the stack
 {
     if (sp < MAXVAL)
         val[sp++] = f;
@@ -64,7 +66,7 @@ void push(double f)
         printf("error: stack full,can't push %g\n", f);
 }
 
-double pop(void) 
+double pop(void)  // pops the value from the stack
 {
     if (sp > 0)
         return val[--sp];
@@ -79,7 +81,7 @@ double pop(void)
 
 
 
-int getop(char s[]) 
+int getop(char s[])   // get operands and operators from the user
 {
     int c, i;
     static int lastc = 0;
@@ -113,7 +115,7 @@ int getop(char s[])
     return NUMBER;
 }
 
-int getch(void) 
+int getch(void)   // get input from the buffer or from getchar()
 {
     return (bufp > 0) ? buf[--bufp] : getchar();
 }
