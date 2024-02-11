@@ -1,10 +1,13 @@
+/* getline to read an entire input line; this makes
+getch and ungetch unnecessary. Revise the calculator to use this approach. */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
 
-#define NUMBER '0'
-#define MAXVAL 100
-#define MAXLINE 100
+#define NUMBER '0'  // this indictes a number
+#define MAXVAL 1000
+#define MAXLINE 1000
 
 int getop(char[]);
 void push(double);
@@ -75,18 +78,18 @@ double pop(void)
     }
 }
 
-int getop(char s[]) 
+int getop(char s[])  // get input operator and operand from the user
 {
     int character, i;
 
     if (line[li] == '\0')
-        if (mgetline(line, MAXLINE) == 0)
+        if (mgetline(line, MAXLINE) == 0)  // calling mgetline
             return EOF;
         else
             li = 0;
 
-    while ((s[0] = character = line[li++]) == ' ' || character == '\t');
-
+    while ((s[0] = character = line[li++]) == ' ' || character == '\t');  // we get the input to the line and read the characters from the line
+									   // hence we have eliminated the use of getch() and ungetch()
     s[1] = '\0';
 
     if (!isdigit(character) && character != '.')
@@ -100,13 +103,12 @@ int getop(char s[])
         while (isdigit(s[++i] = character = line[li++]));
 
     s[i] = '\0';
-
     li--;
 
     return NUMBER;
 }
 
-int mgetline(char s[], int lim) 
+int mgetline(char s[], int lim)  // get input line from the user and store it in a character array
 {
     int i, character;
 
