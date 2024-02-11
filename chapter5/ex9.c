@@ -1,3 +1,6 @@
+/* Rewrite the routines day_of_year and month_day with pointers instead of
+indexing. */
+
 #include<stdio.h>
 
 static char daytab[2][13] = {
@@ -39,7 +42,7 @@ int day_of_year(int year, int month, int day)
     p = daytab[leap];
         
     while(--month)
-    	day += *++p;
+    	day += *++p;  
     return day;
     	
 }
