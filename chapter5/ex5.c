@@ -1,3 +1,7 @@
+/* versions of the library functions strncpy , strncat , and strncmp , which
+operate on at most the first n characters of their argument strings. For example,
+strncpy(s,t,n) copies at most n characters of t to s */
+
 #include<stdio.h>
 #define SIZE 100
 #define MAXLINE 100
@@ -13,21 +17,17 @@ void main()
 	char s[SIZE];
 	char t[SIZE];
 	
-	
 	int n = 5;
 	
+	mgetline(s, MAXLINE);  // get input from the user and store it in s
+	mgetline(t, MAXLINE);  // get input from the user and store it in t
 	
-	mgetline(s, MAXLINE);
-	mgetline(t, MAXLINE);
-	
-	mstrncat(s, t, n);
+	mstrncat(s, t, n); // till n 
 	printf("Concatenated : %s\n", s);
 	
 	n = 6;
 	
 	mstrncpy(s, t, n);
-
-	
 	
 	printf("%s\n", s);
 	char s1[SIZE];
@@ -45,8 +45,8 @@ void main()
 }
 
 
-void mgetline(char line[], int lim)
-{
+void mgetline(char line[], int lim) // get input line from the user
+{ 
 	int character, i;
 	for(i = 0; i < lim -1 && (character = getchar()) != EOF && character != '\n';i++)
 		line[i] = character;
@@ -55,7 +55,7 @@ void mgetline(char line[], int lim)
 }
 
 	
-void mstrncat(char *s, char *t, int n)
+void mstrncat(char *s, char *t, int n) // string concatenation
 {
 	if (n > 0)
 	{	
@@ -66,7 +66,7 @@ void mstrncat(char *s, char *t, int n)
 	}
 }
 
-void mstrncpy(char *s, char *t, int n)
+void mstrncpy(char *s, char *t, int n)   // string copy
 {
 	//printf("In strcpy\n");
 	char *p = s;
@@ -78,7 +78,7 @@ void mstrncpy(char *s, char *t, int n)
 	printf("Copied %s\n", s);
 }
 
-int mstrncmp(char *s1, char *s2, int n)
+int mstrncmp(char *s1, char *s2, int n)  // string compare
 {	
 	int count = 0;
 	
