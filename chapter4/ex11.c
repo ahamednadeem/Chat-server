@@ -84,7 +84,7 @@ double pop(void)  // pops the value from the stack
 int getop(char s[])   // get operands and operators from the user
 {
     int c, i;
-    static int lastc = 0;
+    static int lastc = 0;  // using a static variable
     
     if (lastc == 0)
         c = getch();
