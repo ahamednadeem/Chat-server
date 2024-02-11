@@ -1,3 +1,5 @@
+/* recursive version of the function reverse(s) */
+
 #include<stdio.h>
 
 #define MAXLINE 100 //limit for length of string
@@ -12,8 +14,6 @@ void main()
 	printf("Before Reversed: %s", s);
 	reverse(0, len, s);
 	printf("Reversed : %s", s);
-	
-
 }
 
 
@@ -29,10 +29,7 @@ void reverse(int i, int len, char s[])  //reversing the string s by recursion
 		reverse(++i, len, s); 
 	}
 	return ;
-	
 }
-
-
 
 
 int mgetline(char line[], int lim) //getting input from the user
