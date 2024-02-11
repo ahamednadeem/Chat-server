@@ -1,3 +1,5 @@
+/* Add commands for handling variables */
+
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -24,11 +26,12 @@ int main(void)
     int type, previous_type = 0;
     double operand2, result;
     char input[MAXVAL];
-    double variables[26];
+    double variables[26];  // a double array user for storing variables
 
     while ((type = getop(input)) != EOF) 
     {
-        switch (type) {
+        switch (type) 
+        {
             case NUMBER:
                 push(atof(input));
                 break;
@@ -52,7 +55,7 @@ int main(void)
             case '=':
                 pop();
                 if (previous_type >= 'A' && previous_type <= 'Z')
-                    variables[previous_type - 'A'] = pop();
+                    variables[previous_type - 'A'] = pop();  // if = is encountered, we pop the variable 
                 else
                     printf("error: no variable name\n");
                 break;
@@ -61,7 +64,7 @@ int main(void)
                 printf("\t%.8g\n", result);
                 break;
             default:
-                if (type >= 'A' && type <= 'Z')
+                if (type >= 'A' && type <= 'Z')  // for handling variables
                     push(variables[type - 'A']);
                 else if (type == 'v')
                     push(result);
@@ -74,7 +77,7 @@ int main(void)
     return 0;
 }
 
-void push(double value) 
+void push(double value)  // push value into the stack
 {
     if (stack_pointer < MAXVAL)
         stack[stack_pointer++] = value;
@@ -82,7 +85,7 @@ void push(double value)
         printf("error: stack full, can't push %g\n", value);
 }
 
-double pop(void) 
+double pop(void)  // pop value from the stack
 {
     if (stack_pointer > 0)
         return stack[--stack_pointer];
@@ -92,7 +95,7 @@ double pop(void)
     }
 }
 
-int getop(char input[]) 
+int getop(char input[])   // get input from the user
 {
     int character, i = 0;
 
@@ -116,12 +119,12 @@ int getop(char input[])
     return NUMBER;
 }
 
-int getch(void) 
+int getch(void) // get input from the buffer or from getchar() function
 {
     return (buffer_index > 0) ? buf[--buffer_index] : getchar();
 }
 
-void ungetch(int c) 
+void ungetch(int c) // store into the buffer
 {
     if (buffer_index >= BUFFER_SIZE)
         printf("ungetch: too many characters\n");
