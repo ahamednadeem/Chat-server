@@ -1,3 +1,6 @@
+/* Rewrite appropriate programs from earlier chapters and exercises with pointers
+instead of array indexing */
+
 #include<stdio.h>
 #include<ctype.h>
 #include<string.h>
@@ -158,7 +161,8 @@ void itoa(int n, char *s)
 
     do 
     {
-        *s++ = n % 10 + '0';
+        *s = n % 10 + '0';
+        s++;
     } 
     while ((n /= 10) > 0);
 
