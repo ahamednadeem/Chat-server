@@ -1,3 +1,7 @@
+/* As written, getint treats a + or - not followed by a digit as a valid
+representation of zero. Fix it to push such a character back on the input. */
+
+
 #include<stdio.h>
 #include<ctype.h>
 
@@ -8,12 +12,12 @@ char buf[BUFSIZE];
 int buffer_pointer = 0;
 int flag = 0;
 
-int getch(void)
+int getch(void)  // get input from the buffer or from getchar() function
 {
 	return (buffer_pointer > 0) ? buf[--buffer_pointer] : getchar();
 }
 
-void ungetch(int character)
+void ungetch(int character)  // store the data in the buffer 
 {
 	if(buffer_pointer >= BUFSIZE)
 		printf("too many character\n");
@@ -22,7 +26,7 @@ void ungetch(int character)
 }
 
 
-int getint(int *pn)
+int getint(int *pn)  // get input from the user using pointer variables
 {
 	int character, sign;
 
@@ -34,19 +38,19 @@ int getint(int *pn)
 		return -1;
 	}
 
-	sign = (character == '-') ? -1 : 1;
+	sign = (character == '-') ? -1 : 1;  // note down the sign 
 
 	
 	if(character == '+' || character == '-')
 		character = getch();
 		
 	if(!isdigit(character)) //to make sure the character after '+' or '-' is a digit
-		{
-			flag = 1;
-			return character;
-		}
+	{
+		flag = 1;
+		return character;
+	}
 
-	for(*pn = 0; isdigit(character); character = getch())
+	for(*pn = 0; isdigit(character); character = getch())   // converting into integer values
 		*pn = 10 * *pn + (character - '0');
 
 	*pn *= sign;
@@ -64,21 +68,14 @@ void main()
 	for(i = 0; i < SIZE && (getint(&array[i])) != EOF; i++)
 	{
 	
-		if(flag)
+		if(flag)  // if a digit is not followed by '-' or '+'
 		{
 			printf("Invalid input at index %d\n", i);
 			break;
 		}
-	
 	count++;
         }
-	
-	
-	
+        
 	for(i = 0; i < count; i++)
 		printf("index %d : %d \n", i, array[i]);		
 }
-
-
-
-
