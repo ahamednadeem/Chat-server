@@ -1,3 +1,6 @@
+/* unction strend(s,t) , which returns 1 if the string t occurs at the
+end of the string s , and zero otherwise. */ 
+
 #include<stdio.h>
 #define SIZE 100
 #define MAXLINE 100
@@ -12,7 +15,7 @@ void main()
 	mgetline(s, MAXLINE);
 	mgetline(t, MAXLINE);
 	
-	printf("%d", mstrend(s, t));
+	printf("%d\n", mstrend(s, t));
 }
 
 void mgetline(char line[], int lim)   //get input from the user
@@ -36,9 +39,9 @@ int mstrend(char *s, char *t)   //to compute if t is at the end of s
 	for(; *s; s++); //going to the end of s
 	for(; *t; t++); //going to the end of t
 	
-	for(; *s == *t; s--, t--)
+	for(; *s == *t; s--, t--)  // we check if they are same from the back
 	{
-		if(t == starting_t)
+		if(t == starting_t)  // required condition if t occurs at the back of s
 			return 1;
 	}
 	return 0;
