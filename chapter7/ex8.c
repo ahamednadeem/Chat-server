@@ -51,7 +51,7 @@ void printpages(FILE *ifp, FILE *ofp)   //ifp is the pointer to input file, ofp 
         if (character == '\n')  //newline entered
         {
             line += 1;
-            
+         
             if (line == LINESPERPAGE) 
             {
                 printf("\n\nEnd of page %d.\n\n", page);

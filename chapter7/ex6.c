@@ -1,20 +1,17 @@
 /* Write a program to compare two files, printing the first line where they differ. */
 
 
-
-
 #include <stdio.h>
 #include <stdlib.h>
-#include<string.h>
+#include <string.h>
 
-#define MAX_LINE_LENGTH 100
+#define MAX_LINE_LENGTH 1000
 
 void file_compare(FILE *file1, FILE *file2);
 
 int main(int argc, char *argv[]) 
 {
     FILE *file1, *file2; //pointers for file1 and file2
-
     if (argc == 1) //no input in command line
     {
         printf("Please provide two files as arguments to proceed ");

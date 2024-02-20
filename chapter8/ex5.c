@@ -16,7 +16,7 @@
 #define DIRSIZ 14
 #endif
 
-void dirwalk( char *dir,void (*fcn)(char *))    //this function walks throught the files in the directory given
+void dirwalk(char *dir,void (*fcn)(char *))    //this function walks throught the files in the directory given
 { 
 	char name[MAX_PATH];
 	struct dirent *dp;
@@ -30,7 +30,7 @@ void dirwalk( char *dir,void (*fcn)(char *))    //this function walks throught t
 	puts(dir);   //You print the directory name
 	
 	// Get each dir entry
-	while((dp=readdir(dfd)) != NULL)  //dp is a pointer which reads the files in the directory
+	while((dp = readdir(dfd)) != NULL)  //dp is a pointer which reads the files in the directory
 	{
 		if(strcmp(dp->d_name,".") == 0 || strcmp(dp->d_name,"..") ==0 )   //. or .. means argc == 1, hence all the files in the current directory is to be accessed
 			continue;
@@ -49,7 +49,7 @@ void fsize(char *name)
 {
 	struct stat stbuf;   
 
-	if(stat(name,&stbuf) == -1)  //stbuf is a structur which stores the information 
+	if(stat(name,&stbuf) == -1)  //stbuf is a structure which stores the information 
 	{
 		puts("Error: Cannot get file stats!");
 		return;
@@ -68,7 +68,8 @@ void fsize(char *name)
 
 
 
-int main(int argc,char *argv[]){
+int main(int argc,char *argv[])
+{
 
 	if(argc==1)   //no arguments are given
 		fsize(".");

@@ -1,3 +1,5 @@
+/* Modify the program entab and detab */
+
 #include <stdio.h>
 #include<stdlib.h>
 

@@ -14,8 +14,6 @@ struct nlist {          // table entry
     char *defn;         // replacement text 
 };
 
-
-
 static struct nlist *hashtab[HASHSIZE]; // pointer table 
 
 
@@ -28,8 +26,6 @@ unsigned hash(char *s) {   // form hash value for string s
     return hashval % HASHSIZE;
 }
 
-
-
 struct nlist *lookup(char *s) {     //look for s in hashtab
     struct nlist *np;
 
@@ -38,8 +34,6 @@ struct nlist *lookup(char *s) {     //look for s in hashtab
             return np; // found 
     return NULL;       // not found 
 }
-
-
 
 // put name, defn in hashtab 
 struct nlist *install(char *name, char *defn) {
