@@ -15,58 +15,79 @@
 #define MAX 65536
 #define PORT 8090
 
-void proxy_to_server(int socket_client) 
+void proxy_to_server(int socket_client)   // handle the incoming request, retrieve the hostname and port number
 {
+	int flag = 0;
 	char request[MAX];
 	int socket_server;
 	size_t r;
   	struct addrinfo *hserv, hints, *p;
   	int n;
+  	char host_name[100];
+  	char port_number[6] = "80";
   	
-	memset(request, 0, sizeof(request));
 
 	if((r = read(socket_client, request, MAX)) > 0)
 	{
 		printf("Received Request from client is: %s\n", request);
-		char *get = strstr(request, "detectportal");
-		if(get != NULL)
-			return ;
-		get = strstr(request, "CONNECT");
-		if(get != NULL)
-			return ;
+	
+		char *get = strstr(request, "Host:");
+		get += 6;
 		
+		char *get2 = strstr(get, "\n");
+		
+		char* a;
+		a = get;
+		
+		while(a != get2) 
+		{
 			
-		char *base1 = strstr(request, "//");
-		base1 += 2;
-		char *base2 = strstr(base1, ":");
+			if(*a == ':')
+			{
+				flag = 1;
+				printf("\nflag is set\n");
+				break;
+			}
+			a++;
+		}
+			
+		if(flag)   // if the request is from a local host
+		{
+			char *base1 = strstr(request, "//");
+			base1 += 2;
+			char *base2 = strstr(base1, ":");
 		
-		
-		char host_name[15];
-		memset(&host_name, '\0', strlen(host_name));
-		
-		int i = 0;
-		while(base1 != base2)
-			host_name[i++] = *base1++;
-		host_name[i] = '\0';
+			int i = 0;
+			while(base1 != base2)
+				host_name[i++] = *base1++;
+			host_name[i] = '\0';
 
-		base2 += 1;
-		char port_number[6];
-		memset(&port_number, '\0', strlen(port_number));
-		base1 = strstr(base1, "/");
+			base2 += 1;
+			
+			base1 = strstr(base1, "/");
 		
-		int j = 0;
-		while(base2 != base1)
+			int j = 0;
+			while(base2 != base1)
 			port_number[j++] = *base2++;
-		port_number[j] = '\0';
+			port_number[j] = '\0';
+			
+			printf("\nServer hostname: %s\n",host_name);
+			printf("\nServer port: %s\n", port_number);	
+		}
+		else  // if the request is from remote server
+		{
+			int i = 0;
+			while(get != get2)
+				host_name[i++] = *get++;
+			i -= 1;
+			host_name[i] = '\0';
 
-		//int port = atoi(port_number);
-		//port = htons(port);
-		
-		printf("\nServer hostname: %s\n",host_name);
-		printf("\nServer port: %s\n", port_number);	
+			printf("\nHost name: %s\n", host_name);
+			printf("\nPort Number: %s\n", port_number);
+		} 	
 		
 		memset(&hints, '\0' ,sizeof(hints));  
-		
+		printf("wfbre");
 		hints.ai_family = AF_UNSPEC;
 		hints.ai_socktype = SOCK_STREAM;
 				
@@ -129,6 +150,7 @@ void proxy_to_server(int socket_client)
 	
 }
 
+
 int main()
 {
 	int socket_server, socket_client;
@@ -158,7 +180,7 @@ int main()
         	exit(1);
    	}
 	
-	if(bind(socket_server,(struct sockaddr*)&server_address,sizeof(server_address)) < 0)
+	if(bind(socket_server,(struct sockaddr*)&server_address,sizeof(server_address)) < 0)  
 	{	
 		perror("\nBind error...\n");
 		exit(1);
@@ -176,7 +198,7 @@ int main()
 	
 	while(1)
 	{
-		socket_client = accept(socket_server, (struct sockaddr*)&client_address, &client_len);
+		socket_client = accept(socket_server, (struct sockaddr*)&client_address, &client_len);  // accept incoming connections
 		if(socket_client == -1)
 		{
 			perror("\nClient connection error...\n");
@@ -187,6 +209,6 @@ int main()
 		
 		proxy_to_server(socket_client);
 	}
-	close(socket_server);
+	close(socket_server);  // close the socket
 	return 0;
 }
