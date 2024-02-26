@@ -88,6 +88,7 @@ int main()
             }
             close(fd);
         }
+        
         else  // The given file is not found, hence default error page is displayed
         {
             char header[] = "HTTP/1.1 404 Not Found\r\nContent-Type: text/html\r\nContent-Length:1024\r\n\r\n";
