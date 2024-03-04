@@ -13,24 +13,24 @@
 #include <openssl/bio.h>
 #include <openssl/buffer.h>
 #include <openssl/evp.h>
-#include<time.h>
+#include <time.h>
 
 //#define SA struct sockaddr
-#define BACKLOG 5  
+#define BACKLOG 20 
 #define MAX_CLIENTS 20  // maximum number of clients in the queue
 #define PORT "8060"  // port number of the server
-#define GUID "258EAFA5-E914-47DA-95CA-C5AB0DC85B11" // a magic key
+#define GUID "258EAFA5-E914-47DA-95CA-C5AB0DC85B11" //  magic key which is to be concatenated to the key
 
-typedef struct client_details  // each client has an userid, their client_socket and a name
+typedef struct client_details  // each client has their own socket id and a name, the name must be unique
 {
 	int connfd;
-	char name [20];
+	char name[35];
 } client_t;
 
-client_t *clients [MAX_CLIENTS];  // an array of structures to store the client information
-pthread_mutex_t clients_mutex = PTHREAD_MUTEX_INITIALIZER;
+client_t *clients[MAX_CLIENTS];  // an array of structures to store the client information
+pthread_mutex_t clients_mutex = PTHREAD_MUTEX_INITIALIZER;  
 
-void send_frame(const uint8_t *frame, size_t length, int connfd) 
+void send_frame(const uint8_t *frame, size_t length, int connfd)   // to send the pong frame to the client
 {
     ssize_t bytes_sent = send(connfd, frame, length, 0); // we send the pong frame to the client
     if (bytes_sent == -1)
@@ -48,21 +48,21 @@ void send_pong(const char *payload, size_t payload_length, int connfd)
     send_frame(pong_frame, payload_length + 2, connfd);  // we send the updated pong_frame
 }
 
-void ping (const uint8_t *data, size_t length, int connfd) 
+void ping(const uint8_t *data, size_t length, int connfd) // handle the ping from the client
 {
     char ping_payload [126];  // stores the payload 
     memcpy (ping_payload, data + 2, length - 2); // data + 2 is the payload , length is the total length of the data, length of payload is length - 2
-    ping_payload [length - 2] = '\0';
-    send_pong (ping_payload, length - 2, connfd); // we send the payload data as the pong
+    ping_payload[length - 2] = '\0';
+    send_pong(ping_payload, length - 2, connfd); // we send the payload data as the pong
 }
 
-//Add client to list
+//Add newly joined client to list
 void queue_add(client_t *client)
 {
-	pthread_mutex_lock (&clients_mutex);  // to lock the resource, this prevents data corruption or race conditions
+	pthread_mutex_lock(&clients_mutex);  // to lock the resource, this prevents data corruption or race conditions
 	for(int i = 0; i < MAX_CLIENTS; i++)
 	{
-		if (!clients[i]) // to make sure the same client doesn't gets added in the queue
+		if (!clients[i])  // to make sure the same client doesn't gets added in the queue
 		{
 			clients[i] = client;  // we add the client structure in the array
 			break;
@@ -87,42 +87,43 @@ void queue_remove(int connfd)
 	}
 
 	pthread_mutex_unlock (&clients_mutex);
-    	pthread_detach (pthread_self ());
+    	pthread_detach(pthread_self());  // thread to detach itself from the process.
+    	//pthread_self(): This function returns the thread ID of the calling thread. It returns a pthread_t type which uniquely identifies the thread.
 }
 
 // decode the header of a WebSocket frame
 int decode_websocket_frame_header(uint8_t *frame_buffer, uint8_t *fin, uint8_t *opcode, uint8_t *mask, uint64_t *payload_length)  // calculates header size
 {
-    // Extract header bytes and mask
-    	*fin = (frame_buffer[0] >> 7) & 1; 
+         // Extract header bytes and mask
+    	*fin = (frame_buffer[0] >> 7) & 1;  // fin is set during the connection termination phase 
     	*opcode = frame_buffer[0] & 0x0F; // we perfrom frame_buffer[0] & 0F to get the opcode
-    	*mask = (frame_buffer[1] >> 7) & 1;  
-    	int n = 0;
+    	*mask = (frame_buffer[1] >> 7) & 1;   // we find if the masking bit is set or not
     
     	// Calculate payload length based on header type
-    	*payload_length = frame_buffer[1] & 0x7F;  //0x7F(0111 1111)
-    	if (*payload_length == 126) 
+    	*payload_length = frame_buffer[1] & 0x7F;  //0x7F(0111 1111), in MSB Mask Bit is there
+    	if(*payload_length == 126) 
     	{
-		n = 1;
         	*payload_length = *(frame_buffer + 2);
         	*payload_length <<= 8;
         	*payload_length |= *(frame_buffer + 3);
+        	return 4; // we are returning the header size
     	} 
-    	else if (*payload_length == 127)
+    	else if(*payload_length == 127)
     	{
-        	n = 2;
         	*payload_length = 0;
         	for (int i = 2; i < 10; ++i)
-            	*payload_length = (*payload_length << 8) | *(frame_buffer + i);
+            	*payload_length = (*payload_length << 8) | *(frame_buffer + i);  //calculating the payload length
+            	return 10;
     	}
 
-    	return  (2 + (n == 1 ? 2 : (n == 2 ? 8 : 0)));
+	
+    	return 2; // if payload length <= 125
 }
 
 int process_websocket_frame(uint8_t *data, size_t length, char **decoded_data, int connfd)   
 {
     uint8_t fin, opcode, mask;
-    uint64_t payload_length;
+    uint64_t payload_length;  // length of the payload(the data/message received from the client)
     uint8_t* masking_key;
 
     int header_size = decode_websocket_frame_header(data, &fin, &opcode, &mask, &payload_length);
@@ -132,14 +133,12 @@ int process_websocket_frame(uint8_t *data, size_t length, char **decoded_data, i
         return -1;
     }
     
-    if (mask) 
+    if (mask) // the mask bit will be set
     {
-    	masking_key = header_size + data;
-    	header_size += 2;
+    	masking_key = header_size + data;  // masking bits start after the payload_length
+    	header_size += 4;  // masking requires 4 bytes 
     }
-    header_size += 2;
-    // masking requires 4 bytes 
-    
+   
     size_t payload_offset = header_size; // payload_offset says the offset value by which the payload data starts
     if (opcode == 0x9) // if opcode is 9 (ping-pong takes place)
     {
@@ -148,41 +147,41 @@ int process_websocket_frame(uint8_t *data, size_t length, char **decoded_data, i
         return 0;
     } 
     else if (opcode == 0x8)  // if opcode is 8, then the connection is closed, hence return -1
-        return -1;
+        return -1; // by returning -1 the current user exits the chat
 
     *decoded_data = (char *)malloc(payload_length + 1);
-    
+    // we are decoding the data sent by the client
     if (mask)
     	for (size_t i = 0; i < payload_length; ++i)
-	     (*decoded_data)[i] = data[payload_offset + i] ^ masking_key [i % 4]; 
+	     (*decoded_data)[i] = data[payload_offset + i] ^ masking_key[i % 4];   // we are unmasking the payload data using masking key provided by the client
 
-    (*decoded_data) [payload_length] = '\0';
+    (*decoded_data)[payload_length] = '\0';
     return 0;
 }
 
 // Function to encode a complete WebSocket frame
-int encode_websocket_frame (uint8_t fin, uint8_t opcode, uint8_t mask, uint64_t payload_length, uint8_t *payload, uint8_t *frame_buffer) 
+int encode_websocket_frame(uint8_t fin, uint8_t opcode, uint8_t mask, uint64_t payload_length, uint8_t *payload, uint8_t *frame_buffer) 
 {
     // Calculate header size based on payload length
     int header_size = 2;
     if (payload_length <= 125) 
     {
-        // short form (we dont need to add any additional bytes)
+     	header_size += 0; // no need to add any additional size to the header
     } 
     else if (payload_length <= 65535) 
     {
-        // Medium form (2 additional bytes is added to the header size)
+        // 2 additional bytes is added to the header size
         header_size += 2;
     } 
     else 
     {
-        // Long form (8 additional bytes is added to the header size)
+        // 8 additional bytes is added to the header size
         header_size += 8;
     }
 
     // Encode header bytes
-    frame_buffer [0] = (fin << 7) | (opcode & 0x0F);
-    frame_buffer [1] = mask << 7;
+    frame_buffer[0] = (fin << 7) | (opcode & 0x0F);  
+    frame_buffer[1] = mask << 7; 
     if (payload_length <= 125) 
         frame_buffer[1] |= payload_length;
     else if (payload_length <= 65535) 
@@ -204,7 +203,7 @@ int encode_websocket_frame (uint8_t fin, uint8_t opcode, uint8_t mask, uint64_t 
 
     
     // Copy payload after header
-    memcpy (frame_buffer + header_size, payload, payload_length);
+    memcpy (frame_buffer + header_size, payload, payload_length); // copy payload length to the frame buffer starting from the offset of header_size
     return header_size + payload_length; // Total frame size
 }
 
@@ -213,7 +212,7 @@ int send_websocket_frame(int client_socket, char *username, uint8_t fin, uint8_t
 {
     uint8_t encoded_data[1024];
     // Encode the WebSocket frame before sending 
-    int encoded_size = encode_websocket_frame(fin, opcode, 0, strlen (payload), (uint8_t *)payload, encoded_data);  // we have set the mask as 0
+    int encoded_size = encode_websocket_frame(fin, opcode, 0, strlen (payload), (uint8_t *)payload, encoded_data);  // encode the data before sending
 
     // Send the encoded message to the client
     ssize_t bytes_sent = send(client_socket, encoded_data, encoded_size, 0);
@@ -227,10 +226,10 @@ int send_websocket_frame(int client_socket, char *username, uint8_t fin, uint8_t
 
 void broadcast_message(char* message, int sender_connfd) 
 {
-    for (int i = 0; i < MAX_CLIENTS; i++)
+    	for (int i = 0; i < MAX_CLIENTS; i++)
 	{
 		if (clients[i] && clients[i] -> connfd != sender_connfd) // we make sure we don't send the broadcast message to the user who has joined
-		    send_websocket_frame(clients[i] -> connfd, clients[i] -> name, 1, 1, message);  // we have set the opcode as 1 (to send text message)
+			send_websocket_frame(clients[i] -> connfd, clients[i] -> name, 1, 1, message);  // we have set the opcode as 1 (to send text message)
 	}
 }
 
@@ -239,35 +238,37 @@ void* handle_client(void* arg)
     	int connfd = *((int*) arg), status; // connfd is the client socket
     	char name [30], *decoded_name = NULL;  
 	
-    	if (recv(connfd, name, sizeof (name), 0) <= 0)  // we receive the name of the user firstly, this name has to be unique
+    	if (recv(connfd, name, sizeof(name), 0) <= 0)  // we receive the name of the user firstly, this name has to be unique
     	{
         	printf("error in receiving username\n");
-        	close (connfd);
+        	close(connfd);
         	free(arg);
         	pthread_exit(NULL);
         	return NULL;
     	}
+    		
 	
     	status = process_websocket_frame(name, sizeof(name), &decoded_name, connfd);  // we have to process the web socket frame after receiving the username
     	if (status == -1)  // some error has occured
     	{
     		printf("Error processing WebSocket frame\n");
         	free (arg);
-        	pthread_exit(NULL);
+        	pthread_exit(NULL); // the thread is terminating without returning NULL value
         	return NULL;
     	}
 
     	client_t* new_client = (client_t*)malloc(sizeof (client_t));  // we are creating a structure for each clients to store their details
+    	
     	new_client -> connfd = connfd;
     	strcpy(new_client -> name, decoded_name);  // copy the decoded name to the name member of new_client
-    
-    	queue_add (new_client);  // we add the new_client in a queue
+    	
+    	queue_add(new_client);  // we add the new_client in a queue
 
     	// Notify all clients about the new user
     	char message [128];
     	sprintf(message, "%s has joined the chat.", new_client -> name);  
     	printf("%s\n", message);
-    	broadcast_message(message, connfd);  // we broadcast the above message to all existing clients 
+    	broadcast_message(message, connfd);  // we broadcast the above message to all existing clients except the sender
 
     	// Receive and broadcast messages
     	while (1) 
@@ -276,14 +277,19 @@ void* handle_client(void* arg)
         	char *decoded_data = NULL;  // this stores the decoded message 
 		memset(&buffer, '\0', strlen(buffer));
         	ssize_t bytes_received = recv(connfd, buffer, sizeof (buffer), 0); // receive the message from the client
+
         	if (bytes_received <= 0)
+        	{
             		break;
+            	}
         	buffer[bytes_received] = '\0';
         	printf("\nMessage got: %s\n", buffer);
-
+        	printf("Bytes Received: %ld\n", bytes_received);
         	int status = process_websocket_frame(buffer, bytes_received, &decoded_data, connfd); 
         	if (status == -1)
+        	{	
             		break;
+            	}
         	else if (status != 0) 
         	{
             		printf("Error processing WebSocket frame\n");
@@ -291,7 +297,7 @@ void* handle_client(void* arg)
             		continue;
         	} 
 
-        	char full_message [24000];
+        	char full_message [65535];
         	printf("Decoded data: %s\n", decoded_data);
         	
         	if (strstr(decoded_data, "send_to:") && (strlen(decoded_data) != strlen("send_to:")))
@@ -344,7 +350,7 @@ void* handle_client(void* arg)
         			send_websocket_frame(connfd, receiver_name, 1, 1, "User not found!!!\n");
 
         	}
-        	else
+        	else  // normal message, send the message to all the user
         	{
             		sprintf(full_message, "%s: %s", new_client -> name, decoded_data);
             		// Broadcast the message to all clients
@@ -426,12 +432,12 @@ void handle_client_request(int client_socket, char *request) // the key is extra
 	
     	// Calculate Sec-WebSocket-Accept header
     	char accept_key[1024];
-    	hashing_and_encoding(key_start, accept_key);
+    	hashing_and_encoding(key_start, accept_key); // this is done to ensure the security, integrity, and authenticity of the handshake request and response
 
     	// Send WebSocket handshake response to the client
     	char response [2048];
     	sprintf(response, "HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: %s\r\n\r\n", accept_key);
-    	send (client_socket, response, strlen (response), 0);  // send the response to the client, hence handshake is complete
+    	send(client_socket, response, strlen (response), 0);  // send the response to the client, hence handshake is complete
     	printf ("WebSocket handshake complete\n\n");
 }	
 
@@ -455,7 +461,6 @@ int main()
 		exit(1);
 	}
 	
-	
 	int flag = 0;
 	for (p = servinfo; p != NULL; p = p -> ai_next) // loop through all the results and bind to the socket in the first we can
     	{
@@ -466,7 +471,6 @@ int main()
 			continue; 
 		} 
 		flag = 1;
-		//printf("Socket creation successful\n");
 		break;
 	}
 	if(!flag)
@@ -501,11 +505,11 @@ int main()
 
     	while (1) 
     	{	
-		struct sockaddr_storage their_addr;
+		struct sockaddr_storage their_addr;  // to store socket addresses
 		
 		socklen_t sin_size;
 		sin_size = sizeof(their_addr); 
-		client_socket = accept(server_socket, (struct sockaddr*)&their_addr, &sin_size); 
+		client_socket = accept(server_socket, (struct sockaddr*)&their_addr, &sin_size);  // accept incoming connections
 		if (client_socket == -1)
     		{		 
 			printf("Failed to accept, Try again...\n");
@@ -513,9 +517,9 @@ int main()
 		} 
 		printf("New Connection has arrived...\n");
 		
-    		char buffer [4096];
+    		char buffer[1024]; // to store the http handshake request
     		ssize_t len = recv(client_socket, buffer, sizeof(buffer), 0);  // we receive the HTTP handshake request from the client
-        	buffer [len] = '\0';
+        	buffer[len] = '\0';
         	
         	handle_client_request(client_socket, buffer);
    
@@ -529,8 +533,6 @@ int main()
             		close(client_socket);
         	}
         	
-        	/*if (pthread_detach(thread_id) != 0) 
-            		perror ("pthread_detach"); */
    	}
 
     	close (server_socket);
